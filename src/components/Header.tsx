@@ -14,7 +14,7 @@ const Header = () => {
     { name: "Contact", path: "/contact" },
     { name: "Testimonials", path: "/testimonials" },
     { name: "FAQ", path: "/faq" },
-    
+
   ];
 
   return (
@@ -101,9 +101,9 @@ const Header = () => {
                 </Link>
               ))}
 
-              <Button variant="ghost" asChild>
+              {/* <Button variant="ghost" asChild>
                 <Link to="/login" onClick={() => setIsMenuOpen(false)}>Login</Link>
-              </Button>
+              </Button> */}
 
               <Button asChild className="bg-gradient-primary w-full">
                 <Link to="/booking" onClick={() => setIsMenuOpen(false)}>Get Started</Link>

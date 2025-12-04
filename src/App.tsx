@@ -15,6 +15,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import DiagnosticPage from "./pages/DiagnosticPage";
 import Dashboard from "./pages/admin/Dashboard";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminSchedule from "./pages/admin/AdminSchedule";
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/diagnostic" element={<DiagnosticPage />} />
           <Route
             path="/admin"
             element={

@@ -23,6 +23,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { supabase } from "@/integrations/supabase/client";
 import { emailService } from "@/lib/emailService";
+import { BookingSuccessDialog } from "@/components/BookingSuccessDialog";
 
 // Transportation services for the dropdown
 const services = [
@@ -67,9 +68,11 @@ const Booking = () => {
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [availableTimeSlots, setAvailableTimeSlots] = useState<{time_slot: string, is_available: boolean}[]>([]);
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<{ time_slot: string, is_available: boolean }[]>([]);
   const [blockedDates, setBlockedDates] = useState<Date[]>([]);
   const [loadingTimeSlots, setLoadingTimeSlots] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState<{ name: string; date: string; time: string; email: string } | undefined>();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -105,7 +108,7 @@ const Booking = () => {
       const { data, error } = await supabase
         .from('blocked_dates')
         .select('blocked_date');
-      
+
       if (error) {
         console.error('Error fetching blocked dates:', error);
         return;
@@ -144,10 +147,10 @@ const Booking = () => {
   const isDateDisabled = (date: Date) => {
     // Disable past dates
     if (date < new Date()) return true;
-    
+
     // Disable blocked dates
     if (blockedDates.some(blockedDate => isSameDay(date, blockedDate))) return true;
-    
+
     return false;
   };
 
@@ -155,7 +158,7 @@ const Booking = () => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       const maxSize = 10 * 1024 * 1024; // 10MB
-      
+
       if (selectedFile.size > maxSize) {
         toast({
           title: "File too large",
@@ -164,14 +167,14 @@ const Booking = () => {
         });
         return;
       }
-      
+
       setFile(selectedFile);
     }
   };
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    
+
     try {
       // Create booking using database function
       const { data: bookingId, error } = await supabase
@@ -210,22 +213,25 @@ const Booking = () => {
 
       // Send confirmation email to client
       const confirmationSent = await emailService.sendBookingConfirmation(bookingId, emailData);
-      
+
       // Send notification email to admin
       const notificationSent = await emailService.sendAdminNotification(bookingId, emailData);
 
-      // Show success message
-      toast({
-        title: "Consultation Booked Successfully!",
-        description: "You'll receive a confirmation email shortly. We'll contact you within 24 hours.",
+      // Set booking details and show success dialog
+      setBookingDetails({
+        name: data.fullName,
+        date: format(data.appointmentDate, 'EEEE, MMMM do, yyyy'),
+        time: data.appointmentTime,
+        email: data.email
       });
+      setShowSuccessDialog(true);
 
       // Reset form
       form.reset();
       setFile(null);
       setSelectedDate(undefined);
       setAvailableTimeSlots([]);
-      
+
       // Refetch time slots for the selected date to update availability
       if (selectedDate) {
         fetchAvailableTimeSlots(selectedDate);
@@ -234,7 +240,7 @@ const Booking = () => {
     } catch (error: any) {
       console.error('Booking error:', error);
       let errorMessage = "Failed to book consultation. Please try again.";
-      
+
       if (error.message?.includes('already booked')) {
         errorMessage = "This time slot is already booked. Please select a different time.";
         // Refresh time slots
@@ -244,7 +250,7 @@ const Booking = () => {
       } else if (error.message?.includes('not available')) {
         errorMessage = "This time slot is not available. Please select a different time.";
       }
-      
+
       toast({
         title: "Booking Failed",
         description: errorMessage,
@@ -260,9 +266,9 @@ const Booking = () => {
       {/* Animated background effects */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-20 pointer-events-none"></div>
       <div className="fixed bottom-20 right-20 w-96 h-96 bg-gradient-radial opacity-40 blur-3xl pointer-events-none animate-pulse-glow"></div>
-      
+
       <Header />
-      
+
       <div className="container max-w-3xl mx-auto px-4 relative z-10 pt-20 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -270,7 +276,7 @@ const Booking = () => {
           transition={{ duration: 0.5 }}
         >
           {/* Header Section */}
-          <motion.div 
+          <motion.div
             className="text-center mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -293,7 +299,7 @@ const Booking = () => {
               <CardContent className="p-6 md:p-8">
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                    
+
                     {/* Personal Information Section */}
                     <div className="space-y-5">
                       <div className="pb-2">
@@ -452,8 +458,8 @@ const Booking = () => {
                                             return checked
                                               ? field.onChange([...field.value, service])
                                               : field.onChange(
-                                                  field.value?.filter((value) => value !== service)
-                                                );
+                                                field.value?.filter((value) => value !== service)
+                                              );
                                           }}
                                         />
                                       </FormControl>
@@ -579,7 +585,7 @@ const Booking = () => {
                                   const minute = timeStr.split(':')[1];
                                   const displayTime = `${hour > 12 ? hour - 12 : hour === 0 ? 12 : hour}:${minute} ${hour >= 12 ? 'PM' : 'AM'}`;
                                   const isAvailable = slot.is_available;
-                                  
+
                                   return (
                                     <Button
                                       key={timeStr}
@@ -715,8 +721,15 @@ const Booking = () => {
           </motion.div>
         </motion.div>
       </div>
-      
+
       <Footer />
+
+      {/* Success Dialog */}
+      <BookingSuccessDialog
+        isOpen={showSuccessDialog}
+        onClose={() => setShowSuccessDialog(false)}
+        bookingDetails={bookingDetails}
+      />
     </div>
   );
 };
