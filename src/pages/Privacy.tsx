@@ -70,8 +70,8 @@ const Privacy = () => {
           <h2>Contact Us</h2>
           <p>
             If you have questions about this Privacy Policy, please contact us at:<br />
-            Email: privacy@liloexpress.com<br />
-            Phone: +1 (555) 123-4567
+            Email: info@liloexpress.com<br />
+            Phone: +1 (301) 664-0162
           </p>
         </div>
       </main>

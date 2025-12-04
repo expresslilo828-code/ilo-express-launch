@@ -5,12 +5,49 @@ import { ArrowRight, ShieldCheck, Building2, FileText, CheckCircle, Star, Truck,
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const Index = () => {
   useScrollAnimation();
+
+  // Structured data for local business
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Lilo Express",
+    "description": "Expert DOT compliance services including USDOT registration, MC numbers, business formation, IRP plates, IFTA permits, and transportation licensing.",
+    "url": "https://liloexpress.com",
+    "logo": "https://liloexpress.com/opengraph-image-p98pqg.png",
+    "telephone": "(123) 456-7890",
+    "email": "info@liloexpress.com",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "US"
+    },
+    "priceRange": "$$",
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "500"
+    },
+    "areaServed": {
+      "@type": "Country",
+      "name": "United States"
+    },
+    "serviceType": [
+      "DOT Compliance",
+      "USDOT Registration",
+      "MC Number",
+      "Business Formation",
+      "IRP Plates",
+      "IFTA Permits",
+      "Transportation Licensing"
+    ]
+  };
+
 
   const { data: testimonials } = useQuery({
     queryKey: ['featured-testimonials'],
@@ -56,6 +93,13 @@ const Index = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
+      <SEO
+        title="Lilo Express - DOT Compliance & Transportation Services | USDOT, MC Numbers, Permits"
+        description="Expert DOT compliance services including USDOT registration, MC numbers, business formation, IRP plates, IFTA permits, and transportation licensing. Fast, reliable service for trucking companies nationwide."
+        keywords="DOT compliance, USDOT number, MC number, trucking permits, IRP plates, IFTA, transportation licensing, business formation, truck compliance, motor carrier authority, liloexpress"
+        canonicalUrl="https://liloexpress.com"
+        structuredData={structuredData}
+      />
       <div className="fixed inset-0 bg-gradient-mesh opacity-30 pointer-events-none"></div>
       <div className="fixed top-20 right-20 w-96 h-96 bg-gradient-radial opacity-50 blur-3xl pointer-events-none animate-pulse-glow"></div>
       <div className="fixed bottom-20 left-20 w-96 h-96 bg-gradient-radial opacity-50 blur-3xl pointer-events-none animate-pulse-glow" style={{ animationDelay: '1.5s' }}></div>

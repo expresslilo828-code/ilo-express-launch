@@ -1,6 +1,7 @@
 import { Target, Users, Shield, TrendingUp, Award, Heart, Zap, Sparkles } from "lucide-react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
@@ -44,6 +45,12 @@ const About = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
+      <SEO
+        title="About Us - Transportation Compliance Experts | Lilo Express"
+        description="Learn about Lilo Express, your trusted partner for DOT compliance and transportation services since 2013. Over 500 clients served with 98% success rate."
+        keywords="about lilo express, DOT compliance experts, transportation services, trucking compliance company"
+        canonicalUrl="https://liloexpress.com/about"
+      />
       {/* Animated background effects */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-20 pointer-events-none"></div>
       <div className="fixed top-20 right-20 w-96 h-96 bg-gradient-radial opacity-40 blur-3xl pointer-events-none animate-pulse-glow"></div>

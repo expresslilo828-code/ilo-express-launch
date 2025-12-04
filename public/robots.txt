@@ -1,14 +1,11 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# Allow all search engines to crawl the site
 User-agent: *
 Allow: /
+
+# Block admin pages from indexing
+Disallow: /admin/
+Disallow: /login
+Disallow: /signup
+
+# Sitemap location
+Sitemap: https://liloexpress.com/sitemap.xml

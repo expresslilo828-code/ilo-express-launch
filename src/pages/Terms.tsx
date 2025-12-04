@@ -76,8 +76,8 @@ const Terms = () => {
           <h2>Contact Information</h2>
           <p>
             For questions about these Terms of Service:<br />
-            Email: legal@liloexpress.com<br />
-            Phone: +1 (555) 123-4567
+            Email: info@liloexpress.com<br />
+            Phone: +1 (301) 664-0162
           </p>
         </div>
       </main>

@@ -161,9 +161,9 @@ const FAQ = () => {
                       </div>
                       <h3 className="font-bold text-foreground mb-2">Call Us</h3>
                       <p className="text-sm text-muted-foreground mb-3">Mon-Fri, 9am-6pm EST</p>
-                      <a href="tel:+1234567890" className="text-blue-600 font-semibold hover:underline">
-                        (123) 456-7890
-                      </a>
+                      <a href="tel:+13016640162" className="text-blue-600 font-semibold hover:underline">
+                        +1 (301) 664-0162
+                      </a>  
                     </div>
 
                     <div className="p-6 rounded-2xl bg-gradient-to-br from-green-50 to-green-100/50 border border-green-200/50 hover:shadow-lg transition-all duration-300 group">

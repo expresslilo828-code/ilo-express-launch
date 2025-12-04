@@ -8,6 +8,7 @@ import { Mail, Phone, MapPin, Send, Clock, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const Contact = () => {
@@ -57,6 +58,12 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden">
+      <SEO
+        title="Contact Us - Get Transportation Compliance Help | Lilo Express"
+        description="Contact Lilo Express for expert DOT compliance assistance. Email, phone, or visit us. Free consultation available. Mon-Fri 9am-5pm EST."
+        keywords="contact lilo express, DOT compliance help, transportation services contact, trucking compliance consultation"
+        canonicalUrl="https://liloexpress.com/contact"
+      />
       {/* Animated background effects */}
       <div className="fixed inset-0 bg-gradient-mesh opacity-20 pointer-events-none"></div>
       <div className="fixed top-20 left-20 w-96 h-96 bg-gradient-radial opacity-40 blur-3xl pointer-events-none animate-pulse-glow"></div>
