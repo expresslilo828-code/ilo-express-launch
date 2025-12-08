@@ -317,69 +317,7 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Testimonials Section - Enhanced */}
-        {testimonials && testimonials.length > 0 && (
-          <section className="py-24 bg-muted/30 backdrop-blur-sm relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGwtb3BhY2l0eT0iMC4wMiI+PHBhdGggZD0iTTM2IDE2NGgxMnYxMkgzNnptNDggNDhoMTJ2MTJIODR6bS0yNCAyNGgxMnYxMkg2MHptLTQ4LTQ4aDEydjEySDB6bS0yNCAyNGgxMnYxMkgxMnptNDggNDhoMTJ2MTJINjB6bS0yNC0yNGgxMnYxMkgzNnptLTI0IDI0aDEydjEySDEyem0yNC00OGgxMnYxMkgzNnoiLz48L2c+PC9nPjwvc3ZnPg==')] opacity-50 pointer-events-none"></div>
 
-            <div className="container mx-auto px-4 relative z-10">
-              <div className="text-center mb-20 scroll-animate">
-                <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-lilo-primary/10 to-lilo-gradient/10 text-lilo-primary rounded-full text-sm font-semibold border border-lilo-primary/20 mb-6">
-                  <Star className="h-4 w-4 fill-current" />
-                  <span>Client Success Stories</span>
-                </div>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 tracking-tight">
-                  What Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-lilo-primary to-lilo-gradient">Clients Say</span>
-                </h2>
-                <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-                  Don't just take our word for it - hear from our satisfied clients across the nation.
-                </p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {testimonials.map((testimonial: any, index: number) => (
-                  <div
-                    key={testimonial.id}
-                    className="scroll-animate group"
-                    style={{ animationDelay: `${index * 0.1}s` }}
-                  >
-                    <Card className="h-full border-none shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 bg-white relative overflow-hidden">
-                      <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-lilo-primary to-lilo-gradient"></div>
-
-                      <CardHeader className="relative z-10">
-                        <div className="flex items-center gap-1 mb-4">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`h-5 w-5 ${i < testimonial.rating ? "fill-yellow-400 text-yellow-400" : "fill-gray-200 text-gray-200"}`}
-                            />
-                          ))}
-                        </div>
-                        <div className="flex items-center gap-4">
-                          <div className="h-14 w-14 rounded-full bg-gradient-to-br from-lilo-primary to-lilo-gradient flex items-center justify-center text-white font-bold text-xl shadow-lg">
-                            {testimonial.client_name.charAt(0)}
-                          </div>
-                          <div>
-                            <CardTitle className="text-lg font-bold">{testimonial.client_name}</CardTitle>
-                            <CardDescription className="font-medium text-lilo-primary">{testimonial.company_name}</CardDescription>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <CardContent className="relative z-10">
-                        <div className="relative">
-                          <span className="absolute -top-2 -left-2 text-6xl text-muted/10 font-serif">"</span>
-                          <p className="text-muted-foreground italic relative z-10 pl-6 leading-relaxed">
-                            {testimonial.content}
-                          </p>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
 
         {/* CTA Section - Enhanced */}
         <section className="py-24 bg-gradient-hero text-lilo-offwhite relative overflow-hidden">
