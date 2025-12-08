@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { ArrowRight, ShieldCheck, Building2, FileText, CheckCircle, Star, Truck, Fuel, Users, Car, ClipboardCheck, MapPin, Sparkles } from "lucide-react";
 import Header from "@/components/Header";
@@ -49,21 +47,7 @@ const Index = () => {
   };
 
 
-  const { data: testimonials } = useQuery({
-    queryKey: ['featured-testimonials'],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('testimonials')
-        .select('*')
-        .eq('is_featured', true)
-        .eq('is_approved', true)
-        .order('created_at', { ascending: false })
-        .limit(3);
 
-      if (error) throw error;
-      return data;
-    },
-  });
 
   const features = [
     {
