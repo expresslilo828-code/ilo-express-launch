@@ -43,15 +43,15 @@ const Contact = () => {
     {
       icon: Phone,
       title: "Call Us",
-      details: "+1 (555) 123-4567",
+      details: "+1 (301) 664-0162",
       description: "Mon-Fri from 9am to 5pm EST",
       gradient: "from-lilo-gradient to-lilo-primary"
     },
     {
       icon: MapPin,
       title: "Visit Us",
-      details: "123 Transportation Ave, Suite 100",
-      description: "City, State 12345",
+      details: "8204 Fenton Street",
+      description: "Silver Spring, MD 20910",
       gradient: "from-lilo-brown to-lilo-primary"
     }
   ];
