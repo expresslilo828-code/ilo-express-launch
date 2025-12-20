@@ -5,6 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import { FileText, Calendar, CheckCircle, Clock, AlertCircle, TrendingUp, Users, BarChart3, ArrowUp, ArrowDown, MoreHorizontal, RefreshCw } from "lucide-react";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
 
+const formatTime = (time: string) => {
+  if (!time) return "";
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+  const period = hour >= 12 ? 'PM' : 'AM';
+  return `${displayHour}:${minutes} ${period} EST`;
+};
+
 interface AnalyticsData {
   totalBookings: number;
   pendingBookings: number;
@@ -357,7 +366,7 @@ const AdminAnalytics = () => {
                         <div className="text-sm text-slate-600">{booking.business_name}</div>
                       )}
                       <div className="text-xs text-slate-500">
-                        {format(new Date(booking.preferred_date), 'MMM dd, yyyy')} at {booking.preferred_time}
+                        {format(new Date(booking.preferred_date), 'MMM dd, yyyy')} at {formatTime(booking.preferred_time)}
                       </div>
                     </div>
                   </div>

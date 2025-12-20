@@ -32,11 +32,18 @@ const AdminSchedule = () => {
 
   // Form states
   const [dayOfWeek, setDayOfWeek] = useState<string>("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startHour, setStartHour] = useState("09");
+  const [startMinute, setStartMinute] = useState("00");
+  const [startPeriod, setStartPeriod] = useState("AM");
+  const [endHour, setEndHour] = useState("05");
+  const [endMinute, setEndMinute] = useState("00");
+  const [endPeriod, setEndPeriod] = useState("PM");
   const [slotDuration, setSlotDuration] = useState("30");
   const [isAvailable, setIsAvailable] = useState(true);
   const [blockReason, setBlockReason] = useState("");
+
+  const hours = Array.from({ length: 12 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const minutes = ["00", "15", "30", "45"];
 
   useEffect(() => {
     fetchData();
@@ -44,7 +51,7 @@ const AdminSchedule = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    
+
     // Fetch time slots
     const { data: timeSlotsData, error: timeSlotsError } = await supabase
       .from('admin_time_slots')
@@ -77,20 +84,47 @@ const AdminSchedule = () => {
 
   const resetTimeSlotForm = () => {
     setDayOfWeek("");
-    setStartTime("");
-    setEndTime("");
+    setStartHour("09");
+    setStartMinute("00");
+    setStartPeriod("AM");
+    setEndHour("05");
+    setEndMinute("00");
+    setEndPeriod("PM");
     setSlotDuration("30");
     setIsAvailable(true);
     setEditingTimeSlot(null);
   };
 
+  const convertTo24h = (hour: string, minute: string, period: string) => {
+    let h = parseInt(hour);
+    if (period === "PM" && h < 12) h += 12;
+    if (period === "AM" && h === 12) h = 0;
+    return `${h.toString().padStart(2, '0')}:${minute}:00`;
+  };
+
+  const parse24h = (time: string) => {
+    const [hStr, m] = time.split(':');
+    let h = parseInt(hStr);
+    const period = h >= 12 ? "PM" : "AM";
+    if (h > 12) h -= 12;
+    if (h === 0) h = 12;
+    return {
+      hour: h.toString().padStart(2, '0'),
+      minute: m,
+      period
+    };
+  };
+
   const handleTimeSlotSubmit = async () => {
-    if (!dayOfWeek || !startTime || !endTime) {
-      toast.error("Please fill in all required fields");
+    if (!dayOfWeek) {
+      toast.error("Please select a day of week");
       return;
     }
 
-    if (startTime >= endTime) {
+    const startTime = convertTo24h(startHour, startMinute, startPeriod);
+    const endTime = convertTo24h(endHour, endMinute, endPeriod);
+
+    if (startTime >= endTime && !(startPeriod === "PM" && endPeriod === "AM")) {
       toast.error("Start time must be before end time");
       return;
     }
@@ -131,8 +165,17 @@ const AdminSchedule = () => {
   const handleEditTimeSlot = (timeSlot: TimeSlotRow) => {
     setEditingTimeSlot(timeSlot);
     setDayOfWeek(timeSlot.day_of_week);
-    setStartTime(timeSlot.start_time);
-    setEndTime(timeSlot.end_time);
+
+    const start = parse24h(timeSlot.start_time);
+    setStartHour(start.hour);
+    setStartMinute(start.minute);
+    setStartPeriod(start.period);
+
+    const end = parse24h(timeSlot.end_time);
+    setEndHour(end.hour);
+    setEndMinute(end.minute);
+    setEndPeriod(end.period);
+
     setSlotDuration(timeSlot.slot_duration_minutes?.toString() || "30");
     setIsAvailable(timeSlot.is_available ?? true);
     setIsTimeSlotDialogOpen(true);
@@ -196,7 +239,7 @@ const AdminSchedule = () => {
   const getDayLabel = (day: string) => {
     const days: Record<string, string> = {
       monday: "Monday",
-      tuesday: "Tuesday", 
+      tuesday: "Tuesday",
       wednesday: "Wednesday",
       thursday: "Thursday",
       friday: "Friday",
@@ -264,25 +307,67 @@ const AdminSchedule = () => {
                     </SelectContent>
                   </Select>
                 </div>
-                
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="startTime">Start Time</Label>
-                    <Input
-                      id="startTime"
-                      type="time"
-                      value={startTime}
-                      onChange={(e) => setStartTime(e.target.value)}
-                    />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Start Time</Label>
+                    <div className="flex gap-2">
+                      <Select value={startHour} onValueChange={setStartHour}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Hour" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {hours.map(h => <SelectItem key={h} value={h}>{h}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <Select value={startMinute} onValueChange={setStartMinute}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Min" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {minutes.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <Select value={startPeriod} onValueChange={setStartPeriod}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="AM/PM" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="AM">AM</SelectItem>
+                          <SelectItem value="PM">PM</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div>
-                    <Label htmlFor="endTime">End Time</Label>
-                    <Input
-                      id="endTime"
-                      type="time"
-                      value={endTime}
-                      onChange={(e) => setEndTime(e.target.value)}
-                    />
+                  <div className="space-y-2">
+                    <Label>End Time</Label>
+                    <div className="flex gap-2">
+                      <Select value={endHour} onValueChange={setEndHour}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Hour" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {hours.map(h => <SelectItem key={h} value={h}>{h}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <Select value={endMinute} onValueChange={setEndMinute}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Min" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {minutes.map(m => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                      <Select value={endPeriod} onValueChange={setEndPeriod}>
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="AM/PM" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="AM">AM</SelectItem>
+                          <SelectItem value="PM">PM</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
 
@@ -313,8 +398,8 @@ const AdminSchedule = () => {
                   <Button onClick={handleTimeSlotSubmit} className="flex-1">
                     {editingTimeSlot ? 'Update' : 'Create'} Time Slot
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setIsTimeSlotDialogOpen(false)}
                   >
                     Cancel
@@ -380,8 +465,8 @@ const AdminSchedule = () => {
                   <Button onClick={handleBlockDate} className="flex-1">
                     Block Date
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setIsBlockDateDialogOpen(false)}
                   >
                     Cancel

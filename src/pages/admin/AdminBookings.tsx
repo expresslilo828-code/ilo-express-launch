@@ -15,6 +15,15 @@ import type { Tables } from "@/integrations/supabase/types";
 
 type BookingRow = Tables<'bookings'>;
 
+const formatTime = (time: string) => {
+  if (!time) return "";
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+  const period = hour >= 12 ? 'PM' : 'AM';
+  return `${displayHour}:${minutes} ${period} EST`;
+};
+
 const AdminBookings = () => {
   const [bookings, setBookings] = useState<BookingRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,9 +58,9 @@ const AdminBookings = () => {
   };
 
   const updateStatus = async (
-    id: string, 
-    status: Tables<'bookings'>['status'], 
-    notes?: string, 
+    id: string,
+    status: Tables<'bookings'>['status'],
+    notes?: string,
     reason?: string
   ) => {
     const { error } = await supabase.rpc('update_booking_status', {
@@ -108,15 +117,15 @@ const AdminBookings = () => {
       email: booking.email,
       phone: booking.phone,
       preferred_date: format(new Date(booking.preferred_date), 'EEEE, MMMM do, yyyy'),
-      preferred_time: booking.preferred_time,
-      services: Array.isArray(booking.services_requested) 
+      preferred_time: formatTime(booking.preferred_time),
+      services: Array.isArray(booking.services_requested)
         ? (booking.services_requested as string[]).join(', ')
         : 'Service details',
       notes: booking.notes || undefined
     };
 
     const success = await emailService.sendReminderEmail(booking.id, emailData);
-    
+
     if (success) {
       toast.success("Reminder email sent successfully");
       fetchBookings();
@@ -129,21 +138,21 @@ const AdminBookings = () => {
     if (selectedBookings.length === 0) return;
 
     const { success, failed } = await emailService.sendBulkReminders(selectedBookings);
-    
+
     if (success > 0) {
       toast.success(`${success} reminder email(s) sent successfully`);
     }
     if (failed > 0) {
       toast.error(`${failed} reminder email(s) failed to send`);
     }
-    
+
     setSelectedBookings([]);
     fetchBookings();
   };
 
   const toggleBookingSelection = (bookingId: string) => {
-    setSelectedBookings(prev => 
-      prev.includes(bookingId) 
+    setSelectedBookings(prev =>
+      prev.includes(bookingId)
         ? prev.filter(id => id !== bookingId)
         : [...prev, bookingId]
     );
@@ -227,7 +236,7 @@ const AdminBookings = () => {
                     <AlertDialogHeader>
                       <AlertDialogTitle>Delete Selected Bookings</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Are you sure you want to delete {selectedBookings.length} selected booking(s)? 
+                        Are you sure you want to delete {selectedBookings.length} selected booking(s)?
                         This action cannot be undone.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
@@ -306,7 +315,7 @@ const AdminBookings = () => {
                       </div>
                       <div className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {booking.preferred_time}
+                        {formatTime(booking.preferred_time)}
                       </div>
                     </div>
 
@@ -411,13 +420,13 @@ const AdminBookings = () => {
                               <h4 className="font-medium">Appointment Details</h4>
                               <div className="space-y-2 mt-2">
                                 <p><strong>Date:</strong> {format(new Date(booking.preferred_date), 'EEEE, MMMM do, yyyy')}</p>
-                                <p><strong>Time:</strong> {booking.preferred_time}</p>
+                                <p><strong>Time:</strong> {formatTime(booking.preferred_time)}</p>
                                 <p><strong>Status:</strong> <Badge className={getStatusColor(booking.status || 'pending')}>{booking.status}</Badge></p>
                                 <p><strong>Created:</strong> {format(new Date(booking.created_at || ''), 'MMM dd, yyyy HH:mm')}</p>
                               </div>
                             </div>
                           </div>
-                          
+
                           {Array.isArray(booking.services_requested) && (
                             <div>
                               <h4 className="font-medium">Requested Services</h4>
@@ -430,14 +439,14 @@ const AdminBookings = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {booking.notes && (
                             <div>
                               <h4 className="font-medium">Client Notes</h4>
                               <p className="mt-2 p-3 bg-gray-50 rounded">{booking.notes}</p>
                             </div>
                           )}
-                          
+
                           {booking.admin_notes && (
                             <div>
                               <h4 className="font-medium">Admin Notes</h4>
@@ -485,7 +494,7 @@ const AdminBookings = () => {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete Booking</AlertDialogTitle>
                           <AlertDialogDescription>
-                            Are you sure you want to delete the booking for {booking.full_name}? 
+                            Are you sure you want to delete the booking for {booking.full_name}?
                             This action cannot be undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>

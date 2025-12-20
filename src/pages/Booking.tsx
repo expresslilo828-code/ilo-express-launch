@@ -22,8 +22,16 @@ import Footer from "@/components/Footer";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { supabase } from "@/integrations/supabase/client";
-import { emailService } from "@/lib/emailService";
 import { BookingSuccessDialog } from "@/components/BookingSuccessDialog";
+
+const formatTime = (time: string) => {
+  if (!time) return "";
+  const [hours, minutes] = time.split(':');
+  const hour = parseInt(hours);
+  const displayHour = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+  const period = hour >= 12 ? 'PM' : 'AM';
+  return `${displayHour}:${minutes} ${period} EST`;
+};
 
 // Transportation services for the dropdown
 const services = [
@@ -206,7 +214,7 @@ const Booking = () => {
         email: data.email,
         phone: data.phone,
         preferred_date: format(data.appointmentDate, 'EEEE, MMMM do, yyyy'),
-        preferred_time: data.appointmentTime,
+        preferred_time: formatTime(data.appointmentTime),
         services: data.services.join(', '),
         notes: data.description
       };
@@ -221,7 +229,7 @@ const Booking = () => {
       setBookingDetails({
         name: data.fullName,
         date: format(data.appointmentDate, 'EEEE, MMMM do, yyyy'),
-        time: data.appointmentTime,
+        time: formatTime(data.appointmentTime),
         email: data.email
       });
       setShowSuccessDialog(true);
@@ -581,9 +589,7 @@ const Booking = () => {
                               <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
                                 {availableTimeSlots.map((slot) => {
                                   const timeStr = slot.time_slot;
-                                  const hour = parseInt(timeStr.split(':')[0]);
-                                  const minute = timeStr.split(':')[1];
-                                  const displayTime = `${hour > 12 ? hour - 12 : hour === 0 ? 12 : hour}:${minute} ${hour >= 12 ? 'PM' : 'AM'}`;
+                                  const displayTime = formatTime(timeStr);
                                   const isAvailable = slot.is_available;
 
                                   return (
